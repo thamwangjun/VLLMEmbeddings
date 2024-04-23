@@ -8,13 +8,10 @@ services:
       context: ./nm-vllm
       dockerfile: Dockerfile
     command: --model $LLM_HF_REPO_ID $VLLM_ARGS
-    # environment:
-    #   - VLLM_API_KEY=${API_KEY}
     volumes:
       - ./workspace:/vllm-workspace
-    ipc: host
-    expose:
-      - 8000
+    networks:
+      - vllmnet
     restart: always
     deploy:
       resources:
@@ -23,11 +20,6 @@ services:
             - driver: nvidia
               count: all
               capabilities: [gpu]
-    # healthcheck:
-    #   test: [ "CMD", "curl", "-f", "http://localhost:8000/health" ]
-    #   interval: 60s
-    #   timeout: 5s
-    #   retries: 10
 
   text-embeddings-inference:
     image: serve-nm-vllm/text-embeddings-inference:1.2
@@ -35,12 +27,10 @@ services:
       context: .
       dockerfile: Dockerfile.text_embeddings_inference
     command: --model-id $EMBEDDINGS_HF_REPO_ID $TEXT_EMBEDDINGS_INFERENCE_ARGS
-    # environment:
-    #   - API_KEY=${API_KEY}
     volumes:
       - ./embeddings-workspace:/data
-    expose:
-      - 80
+    networks:
+      - vllmnet
     restart: always
     deploy:
       resources:
@@ -49,21 +39,15 @@ services:
             - driver: nvidia
               count: all
               capabilities: [gpu]
-    # healthcheck:
-    #   test: [ "CMD", "curl", "-f", "http://localhost:80/health" ]
-    #   interval: 60s
-    #   timeout: 5s
-    #   retries: 10
 
   nginx:
     image: serve-nm-vllm/nginx:1.25.0
     build:
       context: .
       dockerfile: Dockerfile.nginx
+    networks:
+      - vllmnet
     ports:
       - ${API_PORT:-8080}:8080
-    # depends_on:
-    #   vllm:
-    #     condition: service_healthy
-    #   text-embeddings-inference:
-    #     condition: service_healthy
+networks:
+  - vllmnet
