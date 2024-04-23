@@ -1,0 +1,6 @@
+[submodule "nm-vllm"]
+	path = nm-vllm
+	url = https://github.com/neuralmagic/nm-vllm.git
+[submodule "c4ai-command-r-plus-AQLM-2Bit-1x16"]
+	path = c4ai-command-r-plus-AQLM-2Bit-1x16
+	url = https://huggingface.co/ISTA-DASLab/c4ai-command-r-plus-AQLM-2Bit-1x16
