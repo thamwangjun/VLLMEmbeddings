@@ -50,4 +50,4 @@ services:
     ports:
       - ${API_PORT:-8080}:8080
 networks:
-  - vllmnet:
+  vllmnet:
