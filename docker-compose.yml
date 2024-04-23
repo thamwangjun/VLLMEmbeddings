@@ -2,6 +2,7 @@ version: "3.8"
 
 services:
   vllm:
+    shm_size: 16gb
     image: serve-nm-vllm/nm-vllm:v0.2.0.aqlm1
     build:
       context: ./nm-vllm
